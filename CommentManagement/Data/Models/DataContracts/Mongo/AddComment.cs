@@ -36,6 +36,14 @@ namespace CommentManagement.Data.Models.DataContracts.Mongo
         [BsonElement("rootID")]
         public String RootID { get; set; }
 
+        [BsonElement("commentID")]
+        public int CommentID { get; set; }
+
+        public AddComment()
+        {
+
+        }
+
         public AddComment(String parentID, String fromUserID, String toUserID, String fromUserName, 
             String toUserName, String comment, String postID, String rootID, DateTime createdDate)
         {

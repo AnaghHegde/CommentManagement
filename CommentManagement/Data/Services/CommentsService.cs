@@ -1,6 +1,7 @@
 ﻿using CommentManagement.Data.Models;
 using CommentManagement.Data.Models.DataContracts;
 using CommentManagement.Data.Models.DataContracts.Mongo;
+using CommentManagement.Data.Models.Query;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -25,21 +26,15 @@ namespace CommentManagement.Data.Services
         public List<MessageThreads> GetComments(GetCommentsRequest commentsRequest, ICommentsDataBaseSettings settings)
         {
             ConnectToDB(settings);
-            if (commentsRequest.IsPagination)
+            QueryStringHelper helper = new QueryStringHelper();
+            String query = helper.GetCommentsQueryString(commentsRequest);
+            if (commentsRequest.IsSortByLatest)
             {
-                String queryString = String.Format(MongoDbQuery.Pagination, commentsRequest.LastCommentID) +
-                                     String.Format(MongoDbQuery.PostID, commentsRequest.PostID) +
-                                     String.Format(MongoDbQuery.RootId, 0); 
-                queryString = String.Format(MongoDbQuery.AndQuery, queryString);
-                return _mongoDatabase.GetCollection<MessageThreads>("messagethreads").Find(queryString).Limit(10).ToList<MessageThreads>();
+                return _mongoDatabase.GetCollection<MessageThreads>("messagethreads").Find(query).Sort("{createdDate:-1}").Limit(10).ToList<MessageThreads>();
             }else
             {
-                String queryString = String.Format(MongoDbQuery.PostID, commentsRequest.PostID) +
-                                     String.Format(MongoDbQuery.RootId, 0);
-                queryString = String.Format(MongoDbQuery.AndQuery, queryString);
-                return _mongoDatabase.GetCollection<MessageThreads>("messagethreads").Find(queryString).Sort("{createdDate:-1}").Limit(10).ToList<MessageThreads>();
+                return _mongoDatabase.GetCollection<MessageThreads>("messagethreads").Find(query).Sort("{createdDate:1}").Limit(10).ToList<MessageThreads>();
             }
-            
         }
 
         public void PostComment(AddCommentRequest addComment, ICommentsDataBaseSettings settings)
@@ -57,34 +52,33 @@ namespace CommentManagement.Data.Services
         public void EditComment(EditCommentRequest request, ICommentsDataBaseSettings settings)
         {
             ConnectToDB(settings);
-            String queryString = String.Format(MongoDbQuery.ParentID, request.CommentID);
-            if (_mongoDatabase.GetCollection<MessageThreads>("messageThreads").Find(queryString).CountDocumentsAsync().Result == 0)
+            String queryString = String.Format(MongoDbQuery.ParentID, request.Id);
+            if (_mongoDatabase.GetCollection<AddComment>("messageThreads").Find(queryString).CountDocumentsAsync().Result == 0)
             {
-                var builder = Builders<AddComment>.Filter;
-               
-                var filter = builder.Eq(x => x.FromUserID, "3");
-                var builderUpdate = Builders<AddComment>.Update.Set(x => x.Comment, request.Comment);
-                var res = _mongoDatabase.GetCollection<AddComment>("messageThreads").UpdateOne(filter, builderUpdate);
+                var filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(request.Id));
+                var builderUpdate = Builders<BsonDocument>.Update.Set("comment", request.Comment);
+                /*var updList = new List<UpdateDefinition<AddComment>>
+                {
+                     Builders<AddComment>.Update.Set(x => x.Comment, request.Comment)
+                };
+                var update = Builders<AddComment>.Update.Combine(updList);*/
+                var collection = _mongoDatabase.GetCollection<BsonDocument>("messageThreads");
+                var res = collection.UpdateOne(filter, builderUpdate);
             }
         }
 
         public List<MessageThreads> GetReplies(GetSubCommentsRequest commentsRequest, ICommentsDataBaseSettings settings)
         {
             ConnectToDB(settings);
-            if (commentsRequest.IsPagination)
+            QueryStringHelper helper = new QueryStringHelper();
+            String query = helper.GetCommentsQueryString(commentsRequest);
+            if (commentsRequest.IsSortByLatest)
             {
-                String queryString = String.Format(MongoDbQuery.Pagination, commentsRequest.LastCommentID) +
-                                     String.Format(MongoDbQuery.PostID, commentsRequest.PostID) +
-                                     String.Format(MongoDbQuery.RootId, commentsRequest.RootID);
-                queryString = String.Format(MongoDbQuery.AndQuery, queryString);
-                return _mongoDatabase.GetCollection<MessageThreads>("messagethreads").Find(queryString).Limit(10).ToList<MessageThreads>();
+                return _mongoDatabase.GetCollection<MessageThreads>("messagethreads").Find(query).Sort("{createdDate:-1}").Limit(10).ToList<MessageThreads>();
             }
             else
             {
-                String queryString = String.Format(MongoDbQuery.PostID, commentsRequest.PostID) +
-                                     String.Format(MongoDbQuery.RootId, commentsRequest.RootID);
-                queryString = String.Format(MongoDbQuery.AndQuery, queryString);
-                return _mongoDatabase.GetCollection<MessageThreads>("messagethreads").Find(queryString).Sort("{createdDate:-1}").Limit(10).ToList<MessageThreads>();
+                return _mongoDatabase.GetCollection<MessageThreads>("messagethreads").Find(query).Sort("{createdDate:1}").Limit(10).ToList<MessageThreads>();
             }
         }
     }

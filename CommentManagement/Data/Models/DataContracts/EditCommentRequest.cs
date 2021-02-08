@@ -7,7 +7,9 @@ namespace CommentManagement.Data.Models.DataContracts
 {
     public class EditCommentRequest : AddCommentRequest
     {
-        public String CommentID { get; set; }
+        public String Id { get; set; }
+
+        public int CommentId { get; set; }
 
     }
 }
