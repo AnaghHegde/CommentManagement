@@ -1,0 +1,128 @@
+{
+	"info": {
+		"_postman_id": "a3d58cf7-4247-45ca-84b7-2b0027cb584e",
+		"name": "ThreadComments",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "EditComments",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ParentID\":\"0\",\r\n    \"FromUserID\":\"3\",\r\n    \"ToUserID\": \"0\",\r\n    \"Comment\" : \"This is a new -------------------------------- Comment\",\r\n    \"PostID\" : \"6020187fab0e9e103b9d2b89\",\r\n    \"CreatedDate\": \"2019-01-06T17:16:40\",\r\n    \"FromUserName\":\"Anagh\",\r\n    \"ToUserName\":\"\",\r\n    \"RootID\":\"0\",\r\n    \"CommentID\": \"6020418bab0e9e103b9d3c90\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44393/Comments/editComment",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44393",
+					"path": [
+						"Comments",
+						"editComment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AddComments",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ParentID\":\"0\",\r\n    \"FromUserID\":\"3\",\r\n    \"ToUserID\": \"0\",\r\n    \"Comment\" : \"This is a new -------------------------------- Comment\",\r\n    \"PostID\" : \"6020187fab0e9e103b9d2b89\",\r\n    \"CreatedDate\": \"2019-01-08T07:16:40\",\r\n    \"FromUserName\":\"Anagh\",\r\n    \"ToUserName\":\"\",\r\n    \"RootID\":\"0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44393/Comments/PostComment",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44393",
+					"path": [
+						"Comments",
+						"PostComment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetComments",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"PostID\":\"601fe154e39ec5e425e2a20a\",\r\n    \"LastCommentID\":\"601fe047e39ec5e425e2a209\",\r\n    \"IsPagination\": false,\r\n    \"PageID\" : 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44393/Comments/GetComments",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44393",
+					"path": [
+						"Comments",
+						"GetComments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetSubComments",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"PostID\":\"601fe154e39ec5e425e2a20a\",\r\n    \"LastCommentID\":\"0\",\r\n    \"IsPagination\": false,\r\n    \"PageID\" : 0,\r\n    \"RootID\" : \"601fe047e39ec5e425e2a209\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44393/Comments/getSubComments",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44393",
+					"path": [
+						"Comments",
+						"getSubComments"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
